@@ -1,0 +1,493 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2014 CSC. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ 
+ */
+-->
+
+<html lang="en">
+<head>
+<link href="//avaa.tdata.fi/commonjs/ol/3.4.0/css/ol.css" rel="stylesheet" type="text/css" />
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+
+.ol-popup {
+	display: none;
+	position: absolute;
+	background-color: white;
+	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+	-webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+	filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+	padding: 15px;
+	border-radius: 10px;
+	border: 1px solid #cccccc;
+	bottom: 12px;
+	left: -50px;
+}
+
+.ol-popup-content {
+	width: 300px;
+}
+
+.ol-popup:after, .ol-popup:before {
+	top: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.ol-popup:after {
+	border-top-color: white;
+	border-width: 10px;
+	left: 48px;
+	margin-left: -10px;
+}
+
+.ol-popup:before {
+	border-top-color: #cccccc;
+	border-width: 11px;
+	left: 48px;
+	margin-left: -11px;
+}
+
+.ol-popup-closer {
+	text-decoration: none;
+	position: absolute;
+	top: 2px;
+	right: 8px;
+}
+
+.ol-popup-closer:after {
+	content: "x";
+}
+
+.map {
+	height: 400px;
+	width: 100%;
+}
+
+#legend-row {
+	text-align: center;
+	margin-top: 30px;
+}
+
+#legend-placeholder .map-legend-image {
+	padding-top: 50px;
+	max-width: 35% !important;
+}
+
+.map-row {
+	padding-left: 20px !important;
+	padding-right: 40px !important;
+	margin-left: 0px !important;
+}
+
+#map12-container {
+	margin-left: 40px;
+}
+
+
+</style>
+<script src="//avaa.tdata.fi/commonjs/ol/3.4.0/ol.js" type="text/javascript"></script>
+<script src="//code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+
+<title>Country Maps</title>
+</head>
+
+<body>
+	
+	<div class="row description-row">
+		<div class="span12">
+			<h2>Country maps</h2>
+			<p>
+			These maps show the risk of human-carnivore conflict in each country. The risk for each is a combination of the contribution of each country to conserving carnivores (amount of land) and the human development needs in the country. The traffic light code shows countries at low risk (green), countries at medium risk (orange) and countries at high risk (red). The high risk countries are those that have many important species and have the highest human development needs.			
+			</p>
+			<p>
+			You can zoom the map and click on a specific country to find out and the species that would need particular conservation. The first map shows the present condition. The second map shows future condition.
+			</p>
+		</div>
+	</div>	
+	<div class="row map-row">
+		<div class="span6">
+			<h3 class="map1-header">Present</h3>
+			<!-- First row first map -->
+			<div class="map" id="map11-container">&nbsp;</div>
+		</div>
+		<div class="span6">
+			<h3 class="map2-header">Future</h3>
+		<!-- First row second map -->
+			<div class="map" id="map12-container">&nbsp;</div>
+		</div>
+	</div>
+	<div class="row" id="legend-row">
+		<div class="span12" id="legend-placeholder">
+			<img class="map-legend-image" src="//avaa.tdata.fi/commonjs/images/images_carnivores/legend.png"/>
+		</div>
+	</div>
+	
+	<div class="row-fluid">
+		<div class="span12">
+			<div id="popup-map11" class="ol-popup">
+				<a href="#" id="popup-closer-map11" class="ol-popup-closer"></a>
+				<div class="ol-popup-content" id="popup-content-map11"></div>
+			</div>
+			<div id="popup-map12" class="ol-popup">
+				<a href="#" id="popup-closer-map12" class="ol-popup-closer"></a>
+				<div class="ol-popup-content" id="popup-content-map12"></div>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		
+		function AnimalUrlMap() {
+		    var translations = {
+				'Sloth bear': 'http://maps.iucnredlist.org/map.html?id=13143',
+				'Red Wolf': 'http://maps.iucnredlist.org/map.html?id=3747',
+				'Sunda Clouded Leopard': 'http://maps.iucnredlist.org/map.html?id=136603',
+				'Ethiopian wolf': 'http://maps.iucnredlist.org/map.html?id=3748',
+				'Dhole': 'http://maps.iucnredlist.org/map.html?id=5953',
+				'Asiatic Black Bear': 'http://maps.iucnredlist.org/map.html?id=22824',
+				'Striped Hyaena': 'http://maps.iucnredlist.org/map.html?id=10274',
+				'Clouded Leopard': 'http://maps.iucnredlist.org/map.html?id=14519',
+				'Gray wolf': 'http://maps.iucnredlist.org/map.html?id=3746',
+				'African Clawless Otter': 'http://maps.iucnredlist.org/map.html?id=1793',
+				'Tiger': 'http://maps.iucnredlist.org/map.html?id=15955',
+				'Giant Panda': 'http://maps.iucnredlist.org/map.html?id=712',
+				'Leopard': 'http://maps.iucnredlist.org/map.html?id=15954',
+				'Spotted Hyena': 'http://maps.iucnredlist.org/map.html?id=5674',
+				'Javan Ferret Badger': 'http://maps.iucnredlist.org/map.html?id=41697',
+				'Malabar Civet': 'http://maps.iucnredlist.org/map.html?id=23036',
+				'Ruddy Mongoose': 'http://maps.iucnredlist.org/map.html?id=41617',
+				'Rusty-spotted Cat': 'http://maps.iucnredlist.org/map.html?id=18149',
+				'Stripe-necked Mongoose': 'http://maps.iucnredlist.org/map.html?id=41619',
+				'Bengal Fox': 'http://maps.iucnredlist.org/map.html?id=23049',
+				'Egyptian Weasel': 'http://www.iucnredlist.org/details/41660/0',
+				'Indian Grey Mongoose': 'http://maps.iucnredlist.org/map.html?id=41611',
+				'Indian Brown Mongoose': 'http://maps.iucnredlist.org/map.html?id=41612',
+				'Brown Palm Civet': 'http://maps.iucnredlist.org/map.html?id=16104',
+				'Nilgiri Marten': 'http://maps.iucnredlist.org/map.html?id=12847',
+				'Red-tailed Phascogale': 'http://maps.iucnredlist.org/map.html?id=16888',
+				"Harris's Olingo": 'http://maps.iucnredlist.org/map.html?id=2611',
+				'Subtropical Antechinus': 'http://maps.iucnredlist.org/map.html?id=136755'
+		    }
+		    
+		    var translationsLowerCase = {
+					'sloth bear': 'http://maps.iucnredlist.org/map.html?id=13143',
+					'red wolf': 'http://maps.iucnredlist.org/map.html?id=3747',
+					'sunda clouded leopard': 'http://maps.iucnredlist.org/map.html?id=136603',
+					'ethiopian wolf': 'http://maps.iucnredlist.org/map.html?id=3748',
+					'dhole': 'http://maps.iucnredlist.org/map.html?id=5953',
+					'asiatic black bear': 'http://maps.iucnredlist.org/map.html?id=22824',
+					'striped hyaena': 'http://maps.iucnredlist.org/map.html?id=10274',
+					'clouded leopard': 'http://maps.iucnredlist.org/map.html?id=14519',
+					'gray wolf': 'http://maps.iucnredlist.org/map.html?id=3746',
+					'african clawless otter': 'http://maps.iucnredlist.org/map.html?id=1793',
+					'tiger': 'http://maps.iucnredlist.org/map.html?id=15955',
+					'giant panda': 'http://maps.iucnredlist.org/map.html?id=712',
+					'leopard': 'http://maps.iucnredlist.org/map.html?id=15954',
+					'spotted hyena': 'http://maps.iucnredlist.org/map.html?id=5674',
+					'javan ferret badger': 'http://maps.iucnredlist.org/map.html?id=41697',
+					'malabar civet': 'http://maps.iucnredlist.org/map.html?id=23036',
+					'ruddy mongoose': 'http://maps.iucnredlist.org/map.html?id=41617',
+					'rusty-spotted cat': 'http://maps.iucnredlist.org/map.html?id=18149',
+					'stripe-necked mongoose': 'http://maps.iucnredlist.org/map.html?id=41619',
+					'bengal fox': 'http://maps.iucnredlist.org/map.html?id=23049',
+					'egyptian weasel': 'http://www.iucnredlist.org/details/41660/0',
+					'indian grey mongoose': 'http://maps.iucnredlist.org/map.html?id=41611',
+					'indian brown mongoose': 'http://maps.iucnredlist.org/map.html?id=41612',
+					'brown palm civet': 'http://maps.iucnredlist.org/map.html?id=16104',
+					'nilgiri marten': 'http://maps.iucnredlist.org/map.html?id=12847',
+					'red-tailed phascogale': 'http://maps.iucnredlist.org/map.html?id=16888',
+					"harris's olingo": 'http://maps.iucnredlist.org/map.html?id=2611',
+					'subtropical antechinus': 'http://maps.iucnredlist.org/map.html?id=136755'
+			    }
+		    
+		    var translationsFixedLowerCase = {
+					'sloth bear': 'http://maps.iucnredlist.org/map.html?id=13143',
+					'red wolf': 'http://maps.iucnredlist.org/map.html?id=3747',
+					'sunda clouded leopard': 'http://maps.iucnredlist.org/map.html?id=136603',
+					'ethiopian wolf': 'http://maps.iucnredlist.org/map.html?id=3748',
+					'dhole': 'http://maps.iucnredlist.org/map.html?id=5953',
+					'asiatic black bear': 'http://maps.iucnredlist.org/map.html?id=22824',
+					'striped hyaena': 'http://maps.iucnredlist.org/map.html?id=10274',
+					'clouded leopard': 'http://maps.iucnredlist.org/map.html?id=14519',
+					'gray wolf': 'http://maps.iucnredlist.org/map.html?id=3746',
+					'african clawless otter': 'http://maps.iucnredlist.org/map.html?id=1793',
+					'tiger': 'http://maps.iucnredlist.org/map.html?id=15955',
+					'giant panda': 'http://maps.iucnredlist.org/map.html?id=712',
+					'leopard': 'http://maps.iucnredlist.org/map.html?id=15954',
+					'spotted hyena': 'http://maps.iucnredlist.org/map.html?id=5674',
+					'javan ferret badger': 'http://maps.iucnredlist.org/map.html?id=41697',
+					'malabar civet': 'http://maps.iucnredlist.org/map.html?id=23036',
+					'ruddy mongoose': 'http://maps.iucnredlist.org/map.html?id=41617',
+					'rusty-spotted cat': 'http://maps.iucnredlist.org/map.html?id=18149',
+					'stripe-necked mongoose': 'http://maps.iucnredlist.org/map.html?id=41619',
+					'bengal fox': 'http://maps.iucnredlist.org/map.html?id=23049',
+					'egyptian weasel': 'http://www.iucnredlist.org/details/41660/0',
+					'indian gray mongoose': 'http://maps.iucnredlist.org/map.html?id=41611',
+					'indian brown mongoose': 'http://maps.iucnredlist.org/map.html?id=41612',
+					'brown palm civet': 'http://maps.iucnredlist.org/map.html?id=16104',
+					'nilgiri marten': 'http://maps.iucnredlist.org/map.html?id=12847',
+					'red-tailed phascogale': 'http://maps.iucnredlist.org/map.html?id=16888',
+					"harris's olingo": 'http://maps.iucnredlist.org/map.html?id=2611',
+					'subtropical antechinus': 'http://maps.iucnredlist.org/map.html?id=136755'
+			    }
+		
+		    this.getVal = function(field) {
+		    	if(typeof field == "string") {
+		    		var fieldLowerCase = field.toLowerCase();
+			    	if(fieldLowerCase in translationsFixedLowerCase) {
+			    		return translationsFixedLowerCase[fieldLowerCase];	
+			    	}
+		    	}
+		        return null;
+		    }
+		}
+		
+		function getRiskLevelAsString(riskIntAsStr) {
+			var riskInt = parseInt(riskIntAsStr);
+			if(!isNaN(riskInt)) {
+				if(riskInt == 0) {
+					return 'No risk';
+				} else if(riskInt == 1) {
+					return 'Low';
+				} else if(riskInt == 2) {
+					return 'Medium';
+				} else if(riskInt == 3) {
+					return 'High';
+				}
+			}
+			return 'N/A';
+		}
+		
+		var animalUrls = new AnimalUrlMap();
+		var CBIG_GPAN_WMS_URL = "//avaa.tdata.fi/geoserver/cbig_gpan/wms";
+		var SRS = "EPSG:4326";
+		var VERSION = '1.1.0';
+		var SERVER_TYPE = 'geoserver';
+		
+		/** Function for creating country maps layers
+		*/
+		function getCountryLayers() {
+			var layers = [];
+			
+			layers[0] = new ol.layer.Tile({
+				source : new ol.source.TileWMS({
+					url : CBIG_GPAN_WMS_URL,
+					params : {
+						'LAYERS' : 'cbig_gpan:carnivores_countries_w_stats',
+						'SRS' : SRS,
+						'VERSION' : VERSION,
+						'STYLES' : 'cbig_carnivores_countries'
+					}
+				}),
+				visible : true
+			});
+
+			layers[1] = new ol.layer.Tile({
+				source : new ol.source.TileWMS({
+					url : CBIG_GPAN_WMS_URL,
+					params : {
+						'LAYERS' : 'cbig_gpan:carnivores_countries_w_stats',
+						'SRS' : SRS,
+						'VERSION' : VERSION,
+						'STYLES' : 'cbig_carnivores_countries_future'
+					}
+				}),
+				visible : true
+			});
+			return layers;
+		}
+	
+		// MapObj class contains an openlayers 3 map object, a popup object linked to the map object and an overlay object linking popup to map
+		function MapObj(mapId, layers, bindViewMap, popupContainerId, popupContentId, popupCloserId, popupDataSrcBaseURL, popupDataSrcLayer, popupLinkedContainerId, popupLinkedCloserId) {
+			// Popup object
+			if(popupDataSrcBaseURL !== null) {
+				this.popup = new function() {
+					var containerElem = $('#' + popupContainerId);
+					var containerElemJS = document.getElementById(popupContainerId);
+					var contentElem = $('#' + popupContentId);
+					var closerElem = $('#' + popupCloserId);
+					// Linked elements are related to a popup element that is in another map than the one contained in this MapObj
+					var linkedContainerElem = $('#' + popupLinkedContainerId);
+					var linkedCloserElem = $('#' + popupLinkedCloserId);
+					var source = new ol.source.ImageWMS({
+						url : popupDataSrcBaseURL,
+						params : {
+							'LAYERS': popupDataSrcLayer
+						},
+						serverType : SERVER_TYPE
+					});
+					
+					// When X is clicked for closing the popup, hide both this map's popup and the linked map's popup
+					closerElem.on('click', function() {
+						containerElem.attr("style", "display:none;");
+						closerElem.blur();
+						linkedContainerElem.attr("style", "display:none;");
+						linkedCloserElem.blur();
+						return false;
+					});
+					
+					this.getContentElement = function() {
+						return contentElem;	
+					}
+					
+					this.getContainerElement = function() {
+						return containerElem;	
+					}
+					
+					this.getContainerJSElement = function() {
+						return containerElemJS;
+					}
+					
+					this.getSource = function() {
+						return source;
+					}
+					
+				};
+				
+				// Overlay that is used to link popup to the map
+				this.overlay = new ol.Overlay({
+					element: this.popup.getContainerJSElement(),
+					autoPan: true,
+					autoPanAnimation: {
+						duration: 250
+					}
+				});
+			}
+			
+			if(bindViewMap === null) {
+				// If bindViewMap is not given, define view-property for the map
+				this.map = new ol.Map({
+					target: mapId,
+					layers: layers,
+					view: new ol.View({
+						projection : SRS,
+						center : [ 0, 0 ],
+						minZoom : 1,
+						maxZoom : 6,
+						zoom : 2
+					}),
+					overlays : [this.overlay]
+				});
+			} else {
+				// If bindViewMap was given, bind this map's view to the given map
+				this.map = new ol.Map({
+					target: mapId,
+					layers: layers,
+					overlays : [this.overlay]
+				});
+				// This is the piece of code enabling all four maps moving in synchronicity
+				this.map.bindTo('view', bindViewMap);
+			}
+		}
+		
+		var countryLayers = getCountryLayers();
+		// Create map objects
+		var map11 = new MapObj('map11-container', [countryLayers[0]], null, 'popup-map11', 'popup-content-map11', 'popup-closer-map11', CBIG_GPAN_WMS_URL, 'cbig_gpan:carnivores_countries_w_stats', 'popup-map12', 'popup-closer-map12');
+		var map12 = new MapObj('map12-container', [countryLayers[1]], map11.map, 'popup-map12', 'popup-content-map12', 'popup-closer-map12', CBIG_GPAN_WMS_URL, 'cbig_gpan:carnivores_countries_w_stats', 'popup-map11', 'popup-closer-map11');
+		
+		/**
+		 * Add a click handler to the map to render the popup. Linked map is the map where popup should also appear.
+		 */
+		function mapClicked(evt) {
+			var clickedMap = null;
+			var linkedMap = null;
+			var mapTarget = evt.map.getTargetElement().id;
+			if(mapTarget == "map11-container") {
+				clickedMap = map11;
+				linkedMap = map12;
+			} else if(mapTarget == "map12-container") {
+				clickedMap = map12;
+				linkedMap = map11;
+			}
+			
+			// Where on the map clicked 
+			var coordinate = evt.coordinate;
+			// Use map11 view
+			var viewResolution = (map11.map.getView().getResolution());
+			
+			// Get URL from which to get the data for the popup
+			var url1 = clickedMap.popup.getSource().getGetFeatureInfoUrl(coordinate, viewResolution, SRS, {'INFO_FORMAT' : 'application/json', 'propertyName' : 'FIRST_NAME,RISK00,RISKCONS,CROCUTA_CR,HERPESTES_,HERPESTES2,HERPESTES3,HERPESTES4,HYAENA_HYA,MARTES_GWA,MELOGALE_O,MELURSUS_U,NEOFELIS_N,PANTHERA_P,PANTHERA_T,URSUS_THIB,VIVERRA_CI,VULPES_BEN,AILUROPODA,ANTECHINUS,AONYX_CAPE,HARRIS_S_O,CANIS_LUPU,CANIS_RUFU,CANIS_SIME,CUON_ALPIN,MUSTELA_SU,NEOFELIS_D,PARADOXURU,PHASCOGALE,PRIONAILUR'});	
+			if (url1) {
+				setPopupContentFromURL(url1, clickedMap, linkedMap, coordinate);
+			}
+		}
+			
+		// Fetch popup content from server given the URL and set the correct popup contents on base of mapObj
+		function setPopupContentFromURL(url, clickedMap, linkedMap, coordinate) {
+			$.getJSON(url, function(data) {
+				if (data != null && data.features.length > 0) {
+					var popupHtml_present = '<p>';
+					var popupHtml_future = '<p>';
+					var countryHtml = '';
+					var riskHtml_present = '';
+					var riskHtml_future = '';
+					var animalHtml = '';
+					var featureProps = data.features[0].properties;
+					for(var key in featureProps) {
+						var val = featureProps[key];
+						if(key == 'FIRST_NAME') {
+							countryHtml += '<b>Country</b>: ' + val; 
+						} else if(key == 'RISK00') {
+							riskHtml_present += '<b>Risk level (present)</b>: ' + getRiskLevelAsString(val);
+						} else if(key == 'RISKCONS') {
+							riskHtml_future += '<b>Risk level (future)</b>: ' + getRiskLevelAsString(val);
+						} else {
+							var animalUrl = animalUrls.getVal(val);
+							if(animalUrl != null) {
+								if(animalHtml.length > 0) {
+									animalHtml += ', ';
+								}
+								if(animalHtml.length == 0) {
+									animalHtml += '<b>Species at risk</b>: ';
+								}
+								animalHtml += '<a target="_blank" href="' + animalUrl + '">' + val + '</a>';
+							}
+						}
+					}
+					
+					popupHtml_present += countryHtml + '<br/>' + riskHtml_present;
+					popupHtml_future += countryHtml + '<br/>' + riskHtml_future;
+					if(riskHtml_present.indexOf('No risk') == -1) {
+						popupHtml_present += '<br/>' + animalHtml;
+					}
+					if(riskHtml_future.indexOf('No risk') == -1) {
+						popupHtml_future += '<br/>' + animalHtml;
+					}					
+					popupHtml_present += '</p>';
+					popupHtml_future += '</p>';
+					setPopupContentToMap(map11, popupHtml_present, coordinate);
+					setPopupContentToMap(map12, popupHtml_future, coordinate);
+				}
+			});
+		}
+		
+		function setPopupContentToMap(mapObj, popupHtml, coordinate){
+			mapObj.popup.getContentElement().html(popupHtml);
+			mapObj.popup.getContainerJSElement().setAttribute("style", "display:block;");
+			mapObj.overlay.setPosition(coordinate);		
+		}
+		
+		// Invoke mapClicked when map is clicked
+		map11.map.on('singleclick', mapClicked);
+		map12.map.on('singleclick', mapClicked);
+		
+	</script>
+</body>
+</html>

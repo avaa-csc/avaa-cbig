@@ -1,0 +1,43 @@
+.v-caption-optiongroup-caption {
+	left: 0px !important;
+	margin-bottom: 10px;
+}
+
+.v-caption-optiongroup-caption .v-captiontext {
+	font-size: 20px;
+}
+
+.optiongroup-caption .v-radiobutton.v-select-option label,
+.optiongroup-caption .v-checkbox.v-select-option label {
+    display: inline;
+    padding-left: 10px;
+    font-size: 17px;
+}
+
+.optiongroup-caption .v-radiobutton.v-select-option input {
+	vertical-align: top;
+}
+
+.instructions {
+	font-size: 1.3em;
+	text-align: justify;	
+}
+
+.instruction-container {
+	text-align: center !important;
+	margin-top: 10px;
+	margin-left: 20px;
+}
+
+.variant-control-group.layerswitcher {
+	margin-top: 60px;
+}
+
+.variant-control-group {
+	margin-top: 50px;
+}
+
+.variant-description {
+	margin-top: 10px;
+	margin-left: 10px;
+}

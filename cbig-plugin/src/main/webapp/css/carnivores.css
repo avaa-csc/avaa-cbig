@@ -1,0 +1,19 @@
+.v-select-optiongroup.carnivores-chart-control {
+	margin-top: 10px;
+}
+
+.v-select-optiongroup.carnivores-chart-control label {
+	display: inline-block !important;
+}
+
+.v-select-optiongroup.carnivores-chart-control input {
+	vertical-align: baseline !important;
+}
+
+.tooltip-img {
+	max-width: 200px !important;
+}
+
+#page-description {
+	font-size: 16px !important;
+}

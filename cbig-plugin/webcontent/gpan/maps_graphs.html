@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2014 CSC. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ 
+ */
+-->
+
+<html lang="en">
+<head>
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<style type="text/css">
+
+#control-container {
+	text-align: center;
+}
+
+i.fa {
+ 	color: #009BFF;
+ 	cursor: pointer;
+}
+
+#control-left-button {
+ 	margin-right: 10px;
+}
+
+#control-right-button {
+ 	margin-left: 10px;
+}
+
+#description {
+	width: 80%;
+	height: 50%;
+	margin: 0 auto;
+	margin-top: 20px;
+	font-size: large;
+}
+
+#map {
+	width: 80%;
+	margin: 0 auto;
+}
+
+#control-container {
+	text-align: center;
+}
+
+#page-number {
+	display: inline;
+}
+
+#priority-legend-row {
+	text-align: center;
+}
+
+#priority-legend-placeholder .map-legend-image {
+	padding-top: 20px;
+}
+
+</style>
+<script src="//code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+<script src="//avaa.tdata.fi/commonjs/jquery/jquery.preload.min.js" type="text/javascript"></script>
+
+
+<title>Maps and Graphs</title>
+</head>
+
+<body>
+	
+	<div class="container-fluid" id="content-container">
+		<div class="row">	
+			<div id="control-container">
+				<i class="fa fa-arrow-left fa-2x" id="control-left-button"></i>
+				<label id="page-number"></label>
+				<i class="fa fa-arrow-right fa-2x" id="control-right-button"></i>
+			</div>
+		</div>
+		<div class="row" id="description-graph-row">
+			<div class="span6" id="description-container">
+				<div id="description"></div>
+			</div>
+			<div class="span5" id="graph-container">
+				<img id="graph-image" src=""/>
+			</div>
+			<div class="span1"></div>
+		</div>
+		<div class="row" id="map-row">
+			<div class="span2"></div>
+			<div class="span8" id="map-container">
+				<div id="map">
+					<img id="map-image" src=""/>
+				</div>
+			</div>
+			<div class="span2"></div>
+		</div>
+		<div class="row" id="priority-legend-row">
+			<div class="span2"></div>
+			<div class="span8" id="priority-legend-placeholder">
+				<img class="map-legend-image" src=""/>
+			</div>
+			<div class="span2"></div>
+		</div>
+	</div>
+
+<script type="text/javascript">
+
+	$.preload( 	'//avaa.tdata.fi/commonjs/images/images_cbig/map1.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/map2.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/map3.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/map4.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/map5.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/map6.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/graph1.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/graph2.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/graph3.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/graph4.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/graph5.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/graph6.png',
+				'//avaa.tdata.fi/commonjs/images/images_cbig/legend_continous.png'
+     		 );
+
+	var pages = [1,2,3,4,5,6];
+	var pageNumber = 1;
+	var leftClick = "left";
+	var rightClick = "right";
+
+	function getDescriptionHtml() {
+		if(pageNumber == 1) {
+			return "<p>The analysis identified the priorities for expanding the current protected area network to 17 % of the terrestrial land. It compared the spatial patterns and the performance of the prioritizations carried out globally and nationally, limiting the species ranges with present and future (2040) land use.</p> \
+						<p>The analysis was based on the distributions of 24,757 terrestrial vertebrate species and 826 ecoregions.</p> \
+						<p>The graph shows the performance of different prioritizations. The map shows the distribution of the global priorities under 2040 land use.</p> \
+						<p>Use the arrows to explore these results more.</p>";
+		} else if(pageNumber == 2) {
+			return "<p>The present protected areas (PAs) cover globally some 11 % of the terrestrial land areas and  some 19% of the species ranges. The protected area distributions are based on the World Database on Protected Areas.</p>";
+		} else if(pageNumber == 3) {
+			return "<p>There is a high potential to increase the coverage of ecoregions and species with protected area expansion. If placed efficiently, additional protection could triple the current protection of vertebrate species ranges, and cover ~61% of them on average.</p>";
+		} else if(pageNumber == 4) {
+			return "<p>With 2040 land use, the best 17% can cover on average 56% of terrestrial vertebrate species ranges. The land use change would however mean ~12 % loss in species ranges overall and hundreds of threatened species could lose more than 50% of their present effective ranges worldwide.</p>";
+		} else if(pageNumber == 5) {
+			return "<p>Making protected area network expansion prioritizations nationally would be much more inefficient. The performance at 17 % drops with 22 % compared to the global solution.</p>";
+		} else if(pageNumber == 6) {
+			return "<p>If the projected land use for 2040 takes place, and the conservation decisions are made nationally, we would need to protect up to 30 % of terrestrial lands to reach the same coverage of species.</p>";
+		}
+		return "";
+	}
+	
+	function getGraphSrc() {
+		if(pageNumber == 1) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/graph1.png';
+		} else if(pageNumber == 2) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/graph2.png';
+		} else if(pageNumber == 3) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/graph3.png';
+		} else if(pageNumber == 4) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/graph4.png';
+		} else if(pageNumber == 5) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/graph5.png';
+		} else if(pageNumber == 6) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/graph6.png';
+		}
+	}
+	
+	function getMapSrc() {
+		if(pageNumber == 1) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/map1.png';
+		} else if(pageNumber == 2) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/map2.png';
+		} else if(pageNumber == 3) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/map3.png';
+		} else if(pageNumber == 4) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/map4.png';
+		} else if(pageNumber == 5) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/map5.png';
+		} else if(pageNumber == 6) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/map6.png';
+		}
+	}
+	
+	function getLegendSrc() {
+		if(pageNumber == 1) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/legend_continous.png';
+		} else if(pageNumber == 2) {
+			return null;
+		} else if(pageNumber == 3) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/legend_continous.png';
+		} else if(pageNumber == 4) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/legend_continous.png';
+		} else if(pageNumber == 5) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/legend_continous.png';
+		} else if(pageNumber == 6) {
+			return '//avaa.tdata.fi/commonjs/images/images_cbig/legend_continous.png';
+		}
+	}
+	
+	function updatePageNumber() {
+		$('#page-number').html(pageNumber + "/" + pages.length);
+	}
+	
+	function updateDescriptionContent() {
+		$('#description').fadeOut(200, function() {
+			$('#description').html(getDescriptionHtml());
+	        $('#description').fadeIn(400);
+	    });
+	}
+	
+	function updateGraphContent() {
+		$('#graph-container').fadeOut(400, function() {
+			$('#graph-container #graph-image').attr("src", getGraphSrc());
+			$('#graph-container').fadeIn(800);
+	    });
+	}
+	
+	function updateMapContent() {
+		$('#map-container').fadeOut(600, function() {
+			$('#map-container #map-image').attr("src", getMapSrc());
+			$('#map-container').fadeIn(1200, function() {
+				var src = getLegendSrc();
+				var legendPlaceholder = $('#priority-legend-placeholder');
+				if(src === null) {
+					legendPlaceholder.hide();
+				} else {
+					$('.map-legend-image').attr("src", src);
+					legendPlaceholder.show();
+				}
+			});
+	    });
+	}
+	
+	function changeContent() {
+		updatePageNumber();
+		updateDescriptionContent();
+		updateGraphContent();
+		updateMapContent();
+	}
+	
+	function clickControlButton(ev) {
+		var clickType = ev.data;
+		if(clickType == leftClick) {
+			pageNumber = pages[($.inArray(pageNumber, pages) - 1 + pages.length) % pages.length];
+		} else if(clickType == rightClick) {
+			pageNumber = pages[($.inArray(pageNumber, pages) + 1) % pages.length];
+		}
+		changeContent();
+	}
+	
+	$('#control-left-button').on("click", null, leftClick, clickControlButton);
+	$('#control-right-button').on("click", null, rightClick, clickControlButton);
+	changeContent();
+
+</script>
+</body>
+</html>

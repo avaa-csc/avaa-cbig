@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>fi.csc.avaa.cbig</groupId>
+	<artifactId>cbig-portlet</artifactId>
+	<version>1.0</version>
+	<name>CBIG portlets</name>
+
+	<parent>
+		<artifactId>vaadin-liferay-portlet-maven-parent</artifactId>
+		<groupId>fi.csc.avaa</groupId>
+		<version>1.0</version>
+		<relativePath>../avaa-common/vaadin_liferay_portlet_parent_pom.xml</relativePath>
+	</parent>
+
+	<packaging>war</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.vaadin.addon</groupId>
+			<artifactId>vaadin-charts</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>vaadin-ipc-for-liferay</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<!-- Note this dependency needs to be first installed to your local maven 
+			repository. This is done by running maven install task for project AvaaTools 
+			in svn.csc.fi/svn/avaa/avaa_tools -->
+		<dependency>
+			<groupId>fi.csc.avaa</groupId>
+			<artifactId>AvaaTools</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+</project>
