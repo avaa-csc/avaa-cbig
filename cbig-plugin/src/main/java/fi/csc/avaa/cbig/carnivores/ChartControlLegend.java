@@ -115,7 +115,7 @@ public class ChartControlLegend extends CustomComponent {
 		} else {
 			LOG.error("Unable to create optiongroup for charts");
 		}
-		ChartTools.getAllTooltipUrls().forEach(url -> JavaScript.getCurrent().execute("(new Image()).src='" + url + "';"));
+		//ChartTools.getAllTooltipUrls().forEach(url -> JavaScript.getCurrent().execute("(new Image()).src='" + url + "';"));
 		setCompositionRoot(baseLayout);
 	}
 
@@ -132,15 +132,15 @@ public class ChartControlLegend extends CustomComponent {
 
 	private void setGraphVisibility(String id, boolean isVisible) {
 		if(!isInit && isVisible && !graphVisibilities.get(id)) {
-			String tooltipHtml = ChartTools.getCarnivoresControlTooltip(chartType, id);
-			if(tooltipHtml != null) {
-				Notification not = new Notification(null, tooltipHtml,
-							Notification.Type.HUMANIZED_MESSAGE);
-				not.setHtmlContentAllowed(true);
-				not.setDelayMsec(500);
-				not.setPosition(Position.MIDDLE_RIGHT);
-				UI.getCurrent().showNotification(not);
-			}
+//			String tooltipHtml = ChartTools.getCarnivoresControlTooltip(chartType, id);
+//			if(tooltipHtml != null) {
+//				Notification not = new Notification(null, tooltipHtml,
+//							Notification.Type.HUMANIZED_MESSAGE);
+//				not.setHtmlContentAllowed(true);
+//				not.setDelayMsec(500);
+//				not.setPosition(Position.MIDDLE_RIGHT);
+//				UI.getCurrent().showNotification(not);
+//			}
 		}
 		isInit = false;
 		graphVisibilities.put(id, isVisible);
